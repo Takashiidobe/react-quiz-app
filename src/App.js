@@ -12,7 +12,8 @@ class App extends Component {
       count: 0,
       questionBank: [],
       error: false,
-      points: 0
+      points: 0,
+      answer: ""
     };
   }
 
@@ -47,6 +48,17 @@ class App extends Component {
     }
   };
 
+  showAnswer = () => {
+    const hiddenAnswer = document.getElementById("hidden");
+    hiddenAnswer.removeAttribute("id");
+  };
+
+  onAnswerChange = e => {
+    this.setState({
+      answer: `${e.target.value.toLowerCase()}`
+    });
+  };
+
   render() {
     return (
       <div className="App">
@@ -76,7 +88,7 @@ class App extends Component {
             <p>Oh no, there was an error fetching your question!</p>
           )}
         </p>
-
+        <p>Points: {this.state.points}</p>
         <div className="question">
           {this.state.questionBank.length > 0
             ? this.state.questionBank.map((item, index) => {
@@ -86,9 +98,29 @@ class App extends Component {
                       Question: {item.question}
                     </li>
                     <li key={index + Math.random() * 255}>
-                      Category Title: {item.category.title}
+                      Category Title: {item.category.title || ""}
                     </li>
                     <li key={index + Math.random() * 255}>
+                      <label htmlFor="answer">Your Answer:</label>
+                      <input
+                        type="text"
+                        className="answer"
+                        id="shown"
+                        name="answer"
+                        onChange={this.onAnswerChange}
+                      />
+                    </li>
+                    <li key={index + Math.random() * 255} className="points">
+                      Points: {item.value}
+                    </li>
+                    <button className="check-answer" onClick={this.showAnswer}>
+                      Check Answer
+                    </button>
+                    <li
+                      key={index + Math.random() * 255}
+                      className="answer"
+                      id="hidden"
+                    >
                       Answer: {item.answer}
                     </li>
                   </ul>
