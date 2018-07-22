@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import axios from "axios";
 
@@ -49,24 +48,27 @@ class App extends Component {
   };
 
   showAnswer = () => {
-    const hiddenAnswer = document.getElementById("hidden");
-    hiddenAnswer.removeAttribute("id");
+    const hiddenAnswer = document.querySelectorAll(".hidden");
+    console.log(hiddenAnswer);
+    hiddenAnswer.classList.remove("hidden");
   };
 
-  onAnswerChange = e => {
+  rightAnswer = () => {
     this.setState({
-      answer: `${e.target.value.toLowerCase()}`
+      points: this.state.points + 100
+    });
+  };
+
+  wrongAnswer = () => {
+    this.setState({
+      points: this.state.points - 100
     });
   };
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
+        <div className="App-intro">
           {this.state.error === false ? (
             <div>
               <form>
@@ -87,7 +89,7 @@ class App extends Component {
           ) : (
             <p>Oh no, there was an error fetching your question!</p>
           )}
-        </p>
+        </div>
         <p>Points: {this.state.points}</p>
         <div className="question">
           {this.state.questionBank.length > 0
@@ -100,28 +102,22 @@ class App extends Component {
                     <li key={index + Math.random() * 255}>
                       Category Title: {item.category.title || ""}
                     </li>
-                    <li key={index + Math.random() * 255}>
-                      <label htmlFor="answer">Your Answer:</label>
-                      <input
-                        type="text"
-                        className="answer"
-                        id="shown"
-                        name="answer"
-                        onChange={this.onAnswerChange}
-                      />
-                    </li>
                     <li key={index + Math.random() * 255} className="points">
                       Points: {item.value}
                     </li>
                     <button className="check-answer" onClick={this.showAnswer}>
                       Check Answer
                     </button>
-                    <li
-                      key={index + Math.random() * 255}
-                      className="answer"
-                      id="hidden"
-                    >
+                    <li key={index + Math.random() * 255} className="hidden">
                       Answer: {item.answer}
+                    </li>
+                    <li key={index + Math.random() * 255} className="hidden">
+                      <button onClick={this.rightAnswer}>
+                        I got it right!
+                      </button>
+                      <button onClick={this.wrongAnswer}>
+                        I didn't get it right.
+                      </button>
                     </li>
                   </ul>
                 );
