@@ -67,7 +67,7 @@ class App extends Component {
 
   rightAnswer = () => {
     this.setState({
-      points: this.state.points + value,
+      points: this.state.points + parseInt(value, 10),
       disableButtons: true
     });
     localStorage.setItem(
@@ -78,7 +78,7 @@ class App extends Component {
 
   wrongAnswer = () => {
     this.setState({
-      points: this.state.points - value,
+      points: this.state.points - parseInt(value, 10),
       disableButtons: true
     });
     localStorage.setItem(
@@ -115,18 +115,22 @@ class App extends Component {
           {this.state.questionBank.length > 0
             ? this.state.questionBank.map((item, index) => {
                 {
-                  value = item.value;
+                  value = parseInt(item.value, 10) || 200;
                 }
                 return (
                   <ul>
                     <li key={index + Math.random() * 255}>
-                      Question: {item.question}
+                      Question:{" "}
+                      {item.question ||
+                        "looks like there's no question, feel free to skip this one."}
                     </li>
                     <li key={index + Math.random() * 255}>
-                      Category Title: {item.category.title || ""}
+                      Category Title:{" "}
+                      {item.category.title ||
+                        "there's no category for this one"}
                     </li>
                     <li key={index + Math.random() * 255} className="points">
-                      Points: {item.value}
+                      Points: {item.value || 200}
                     </li>
                     <button className="check-answer" onClick={this.showAnswer}>
                       Check Answer
@@ -145,7 +149,7 @@ class App extends Component {
                         onClick={this.wrongAnswer}
                         disabled={this.state.disableButtons}
                       >
-                        I didn't get it right.
+                        I got it wrong.
                       </button>
                     </li>
                   </ul>
