@@ -3,17 +3,25 @@ import "./App.css";
 import axios from "axios";
 
 const quizURL = `http://jservice.io/api`;
+let value;
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      count: 0,
       questionBank: [],
       error: false,
       points: 0,
-      answer: ""
+      answer: "",
+      disableButtons: null
     };
+  }
+
+  componentDidMount() {
+    const previousPoints = localStorage.getItem("points");
+    this.setState({
+      points: previousPoints || 0
+    });
   }
 
   fetchRandomQuestion = () => {
@@ -29,6 +37,9 @@ class App extends Component {
           error: true
         })
       );
+    this.setState({
+      disableButtons: null
+    });
   };
 
   onNumChange = e => {
@@ -48,20 +59,31 @@ class App extends Component {
   };
 
   showAnswer = () => {
-    const hiddenAnswer = document.querySelectorAll(".hidden");
-    console.log(hiddenAnswer);
-    hiddenAnswer.classList.remove("hidden");
+    const hiddenAnswer = document.getElementById("hidden");
+    const hiddenButtons = document.getElementById("point-buttons");
+    hiddenButtons.removeAttribute("id");
+    hiddenAnswer.removeAttribute("id");
   };
 
   rightAnswer = () => {
     this.setState({
-      points: this.state.points + 100
+      points: this.state.points + value,
+      disableButtons: true
     });
+    localStorage.setItem("points", this.state.points);
   };
 
   wrongAnswer = () => {
     this.setState({
-      points: this.state.points - 100
+      points: this.state.points - value,
+      disableButtons: true
+    });
+    localStorage.setItem("points", this.state.points);
+  };
+
+  resetPoints = () => {
+    this.setState({
+      points: 0
     });
   };
 
@@ -71,29 +93,23 @@ class App extends Component {
         <div className="App-intro">
           {this.state.error === false ? (
             <div>
-              <form>
-                <p>Would you like to refine your question?</p>
-                <label htmlFor="category">Category:</label>
-                <br />
-                <input type="text" name="category" />
-              </form>
-
-              <p>Or just get a random one?</p>
+              <p>Grab a random question!</p>
               <button onClick={this.fetchRandomQuestion}>
                 Random Question
               </button>
-              <p>Maybe you'd like to ask more than one random question?</p>
-              <label htmlFor="count">Number of Questions:</label>
-              <input type="number" name="count" onChange={this.onNumChange} />
             </div>
           ) : (
             <p>Oh no, there was an error fetching your question!</p>
           )}
         </div>
         <p>Points: {this.state.points}</p>
+        <button onClick={this.resetPoints}>Reset Points:</button>
         <div className="question">
           {this.state.questionBank.length > 0
             ? this.state.questionBank.map((item, index) => {
+                {
+                  value = item.value;
+                }
                 return (
                   <ul>
                     <li key={index + Math.random() * 255}>
@@ -108,14 +124,20 @@ class App extends Component {
                     <button className="check-answer" onClick={this.showAnswer}>
                       Check Answer
                     </button>
-                    <li key={index + Math.random() * 255} className="hidden">
-                      Answer: {item.answer}
+                    <li key={index + Math.random() * 255} id="hidden">
+                      Answer: {`What is ${item.answer}?`}
                     </li>
-                    <li key={index + Math.random() * 255} className="hidden">
-                      <button onClick={this.rightAnswer}>
+                    <li key={index + Math.random() * 255} id="point-buttons">
+                      <button
+                        onClick={this.rightAnswer}
+                        disabled={this.state.disableButtons}
+                      >
                         I got it right!
                       </button>
-                      <button onClick={this.wrongAnswer}>
+                      <button
+                        onClick={this.wrongAnswer}
+                        disabled={this.state.disableButtons}
+                      >
                         I didn't get it right.
                       </button>
                     </li>
