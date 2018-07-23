@@ -70,7 +70,10 @@ class App extends Component {
       points: this.state.points + value,
       disableButtons: true
     });
-    localStorage.setItem("points", this.state.points);
+    localStorage.setItem(
+      "points",
+      parseInt(this.state.points, 10) + parseInt(value, 10)
+    );
   };
 
   wrongAnswer = () => {
@@ -78,13 +81,17 @@ class App extends Component {
       points: this.state.points - value,
       disableButtons: true
     });
-    localStorage.setItem("points", this.state.points);
+    localStorage.setItem(
+      "points",
+      parseInt(this.state.points, 10) - parseInt(value, 10)
+    );
   };
 
   resetPoints = () => {
     this.setState({
       points: 0
     });
+    localStorage.setItem("points", 0);
   };
 
   render() {
