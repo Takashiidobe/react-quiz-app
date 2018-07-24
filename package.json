@@ -1,7 +1,9 @@
 {
+  "author": "Takashi Idobe",
+  "description": "A quiz app made in react and electron",
   "homepage": "./",
   "name": "react-electron-quiz",
-  "main": "public/main.js",
+  "main": "public/electron.js",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -18,7 +20,9 @@
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-pack": "build --em.main=build/main.js",
-    "preelectron-pack": "yarn build"
+    "preelectron-pack": "yarn build",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
@@ -27,12 +31,21 @@
     "wait-on": "^2.1.0"
   },
   "build": {
-    "files": [
-      "build/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "buildResources": "assets"
-    }
-  }
+    "appId": "react-quiz-app",
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "squirrel",
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "extends": null
+  },
+  "postinstall": "electron-builder install-app-deps"
 }
